@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Foodgram workflow
 
 on: [push]
@@ -82,3 +83,6 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: ${{ github.workflow }} успешно выполнен!!
+=======
+
+>>>>>>> b5479e2122970290d71bc645d7f69b69a5da52ba

@@ -164,9 +164,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for i in ingredients:
             amount = i['amount']
             if int(amount) < 1:
-                raise serializers.ValidationError(
-                    {'amount': 'Количество ингредиента должно быть больше 0!'}
-                    )
+                raise serializers.ValidationError({
+                    'amount': 'Количество ингредиента должно быть больше 0!'
+                    })
             if i['id'] in list:
                 raise serializers.ValidationError(
                     {'ingredient': 'Ингредиенты должны быть уникальными!'}

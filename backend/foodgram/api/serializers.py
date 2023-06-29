@@ -215,7 +215,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             instance.tags.set(
                 validated_data.pop('tags'))
         return super().update(
-            instance, validated_data)   
+            instance, validated_data)
 
     def to_representation(self, instance):
         return RecipeSerializer(instance, context={

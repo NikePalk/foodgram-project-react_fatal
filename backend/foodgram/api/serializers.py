@@ -77,12 +77,23 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit']
 
 
+class AddIngredientRecipeSerializer(serializers.ModelSerializer):
+    """ Сериализатор добавления ингредиента в рецепт. """
+
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ['id', 'amount']
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     """ Сериализатор просмотра модели Рецепт. """
 
     tags = TagSerializer(many=True)
     author = CustomUserSerializer(read_only=True)
-    ingredients = serializers.SerializerMethodField()
+    ingredients = AddIngredientRecipeSerializer(many=True)
     is_favorited = serializers.SerializerMethodField(
         method_name='get_is_favorited')
     is_in_shopping_cart = serializers.SerializerMethodField(
@@ -120,17 +131,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
 
-class AddIngredientRecipeSerializer(serializers.ModelSerializer):
-    """ Сериализатор добавления ингредиента в рецепт. """
-
-    id = serializers.IntegerField()
-    amount = serializers.IntegerField()
-
-    class Meta:
-        model = RecipeIngredient
-        fields = ['id', 'amount']
-
-
 class CreateRecipeSerializer(serializers.ModelSerializer):
     """ Сериализатор создания/обновления рецепта. """
 
@@ -155,7 +155,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        ingredients = self.data.get('ingredients')
+        ingredients = data['ingredients']
         ingredients_list = []
         for items in ingredients:
             amount = items['amount']
@@ -167,7 +167,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError({
                     'ingredient': 'Ингредиенты должны быть уникальными!'
                 })
-            list.append(items['id'])
+            ingredients_list.append(items['id'])
         return data
 
     def create_ingredients(self, ingredients, recipe):

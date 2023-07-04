@@ -8,7 +8,7 @@ services:
       - ./.env
 
   backend:
-    image: nikepalk/backend:latest
+    image: nikepalk/backend:v1
     restart: always
     volumes:
       - static_value:/app/static/
@@ -20,7 +20,7 @@ services:
     
 
   frontend:
-    image: nikepalk/frontend:latest
+    image: nikepalk/frontend:v1
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

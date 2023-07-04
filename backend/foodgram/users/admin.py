@@ -1,7 +1,8 @@
 from django.contrib import admin
-from foodgram.settings import EMPTY
 
 from .models import Subscription, User
+
+EMPTY_MSG = '-пусто-'
 
 
 @admin.register(User)
@@ -10,7 +11,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'email']
     list_filter = ['username', 'email']
     ordering = ['username']
-    empty_value_display = EMPTY
+    empty_value_display = EMPTY_MSG
 
 
 @admin.register(Subscription)
@@ -23,4 +24,4 @@ class SubscriptionAdmin(admin.ModelAdmin):
         'user__email'
     ]
     list_filter = ['author__username', 'user__username']
-    empty_value_display = EMPTY
+    empty_value_display = EMPTY_MSG

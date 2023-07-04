@@ -1,32 +1,34 @@
-version: '3.3'
+version: '3.8'
 services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - /var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql/
     env_file:
       - ./.env
 
   backend:
-    image: nikepalk/backend:v1
+    image: nikepalk/backend:latest
+    restart: always
     volumes:
-      - ../static/:/app/static/
-      - ../media/:/app/media/recipes/
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:
       - ./.env
-    restart: always
+    
 
   frontend:
-    image: nikepalk/frontend:v1
+    image: nikepalk/frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
-      - db
+      - backend
 
   nginx:
-    image: nginx:1.19.3
+    image: nginx:1.21.3-alpine
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -36,12 +38,10 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
     depends_on:
-      - backend
       - frontend
-    restart: always
+    
 
 volumes:
   postgres_data:
-  
   static_value:
   media_value:

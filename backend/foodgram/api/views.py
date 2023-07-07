@@ -28,9 +28,8 @@ class GetObjectMixin:
     permission_classes = (IsAuthenticated,)
     pagination_class = CustomPagination
 
-    def post(self):
-        recipe = get_object_or_404(Recipe, id=id)
-        return recipe
+    def check_if_exists(self, model_class, recipe):
+        return model_class.objects.filter(user=self.request.user, recipe=recipe).exists()
 
 
 class SubscribeView(APIView):
@@ -79,16 +78,15 @@ class ShowSubscriptionsView(ListAPIView):
         return self.get_paginated_response(serializer.data)
 
 
-class FavoriteView(APIView, GetObjectMixin):
+class FavoriteView(GetObjectMixin, APIView):
     """ Добавление/удаление рецепта в/из избранного. """
 
     def post(self, request, id):
         data = {
             'user': request.user.id,
             'recipe': id
-        }
-        if not Favorite.objects.filter(
-           user=request.user, recipe__id=id).exists():
+        } 
+        if self.check_if_exists(Favorite, id):
             serializer = FavoriteSerializer(
                 data=data, context={'request': request}
             )
@@ -100,8 +98,7 @@ class FavoriteView(APIView, GetObjectMixin):
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if Favorite.objects.filter(
-           user=request.user, recipe=recipe).exists():
+        if self.check_if_exists(Favorite, id):
             Favorite.objects.filter(user=request.user, recipe=recipe).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -147,7 +144,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class ShoppingCartView(APIView, GetObjectMixin):
+class ShoppingCartView(GetObjectMixin, APIView):
     """ Добавление/удаление рецепта в/из корзины. """
 
     def post(self, request, id):
@@ -156,8 +153,7 @@ class ShoppingCartView(APIView, GetObjectMixin):
             'recipe': id
         }
         recipe = get_object_or_404(Recipe, id=id)
-        if not ShoppingCart.objects.filter(
-           user=request.user, recipe=recipe).exists():
+        if not self.check_if_exists(ShoppingCart, recipe):
             serializer = ShoppingCartSerializer(
                 data=data, context={'request': request}
             )
@@ -169,8 +165,7 @@ class ShoppingCartView(APIView, GetObjectMixin):
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if ShoppingCart.objects.filter(
-           user=request.user, recipe=recipe).exists():
+        if self.check_if_exists(ShoppingCart, recipe):
             ShoppingCart.objects.filter(
                 user=request.user, recipe=recipe
             ).delete()

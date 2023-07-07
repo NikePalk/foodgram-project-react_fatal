@@ -25,7 +25,6 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 class GetObjectMixin:
     """ Миксин для добавления/удаления рецептов в избранное/корзину. """
 
-,
 
     permission_classes = (IsAuthenticated,)
     pagination_class = CustomPagination

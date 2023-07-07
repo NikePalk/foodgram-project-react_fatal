@@ -29,14 +29,6 @@ class GetObjectMixin:
     pagination_class = CustomPagination
 
     def post(self):
-        data = {
-            'user': request.user.id,
-            'recipe': id
-        }
-        recipe = get_object_or_404(Recipe, id=id)
-        return recipe
-
-    def delete(self):
         recipe = get_object_or_404(Recipe, id=id)
         return recipe
 
@@ -87,19 +79,23 @@ class ShowSubscriptionsView(ListAPIView):
         return self.get_paginated_response(serializer.data)
 
 
-class FavoriteView(GetObjectMixin, APIView):
+class FavoriteView(APIView, GetObjectMixin):
     """ Добавление/удаление рецепта в/из избранного. """
 
     def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'recipe': id
+        }
         if not Favorite.objects.filter(
            user=request.user, recipe__id=id).exists():
             serializer = FavoriteSerializer(
                 data=data, context={'request': request}
             )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
@@ -150,10 +146,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return context
 
 
-class ShoppingCartView(GetObjectMixin, APIView):
+class ShoppingCartView(APIView, GetObjectMixin):
     """ Добавление/удаление рецепта в/из корзины. """
 
     def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'recipe': id
+        }
         if not ShoppingCart.objects.filter(
            user=request.user, recipe=recipe).exists():
             serializer = ShoppingCartSerializer(

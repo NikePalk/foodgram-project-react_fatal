@@ -29,7 +29,9 @@ class GetObjectMixin:
     pagination_class = CustomPagination
 
     def check_if_exists(self, model_class, recipe):
-        return model_class.objects.filter(user=self.request.user, recipe=recipe).exists()
+        return model_class.objects.filter(
+            user=self.request.user, recipe=recipe).exists(
+        )
 
 
 class SubscribeView(APIView):
@@ -85,7 +87,7 @@ class FavoriteView(GetObjectMixin, APIView):
         data = {
             'user': request.user.id,
             'recipe': id
-        } 
+        }
         if self.check_if_exists(Favorite, id):
             serializer = FavoriteSerializer(
                 data=data, context={'request': request}

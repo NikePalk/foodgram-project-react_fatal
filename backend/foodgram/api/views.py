@@ -25,11 +25,10 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 class GetObjectMixin:
     """ Миксин для добавления/удаления рецептов в избранное/корзину. """
 
-
     permission_classes = (IsAuthenticated,)
     pagination_class = CustomPagination
 
-    def post(self, request, id):
+    def post(self):
         data = {
             'user': request.user.id,
             'recipe': id
@@ -37,7 +36,7 @@ class GetObjectMixin:
         recipe = get_object_or_404(Recipe, id=id)
         return recipe
 
-    def delete(self, request, id):
+    def delete(self):
         recipe = get_object_or_404(Recipe, id=id)
         return recipe
 
@@ -92,22 +91,22 @@ class FavoriteView(GetObjectMixin, APIView):
     """ Добавление/удаление рецепта в/из избранного. """
 
     def post(self, request, id):
-        if not Favorite.objects.filter( 
-           user=request.user, recipe__id=id).exists(): 
-            serializer = FavoriteSerializer( 
-                data=data, context={'request': request} 
-            ) 
-            if serializer.is_valid(): 
-                serializer.save() 
-                return Response( 
-                    serializer.data, status=status.HTTP_201_CREATED) 
-        return Response(status=status.HTTP_400_BAD_REQUEST) 
- 
-    def delete(self, request, id): 
-        if Favorite.objects.filter( 
-           user=request.user, recipe=recipe).exists(): 
-            Favorite.objects.filter(user=request.user, recipe=recipe).delete() 
-            return Response(status=status.HTTP_204_NO_CONTENT) 
+        if not Favorite.objects.filter(
+           user=request.user, recipe__id=id).exists():
+            serializer = FavoriteSerializer(
+                data=data, context={'request': request}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        if Favorite.objects.filter(
+           user=request.user, recipe=recipe).exists():
+            Favorite.objects.filter(user=request.user, recipe=recipe).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -155,24 +154,24 @@ class ShoppingCartView(GetObjectMixin, APIView):
     """ Добавление/удаление рецепта в/из корзины. """
 
     def post(self, request, id):
-        if not ShoppingCart.objects.filter( 
-           user=request.user, recipe=recipe).exists(): 
-            serializer = ShoppingCartSerializer( 
-                data=data, context={'request': request} 
-            ) 
-            if serializer.is_valid(): 
-                serializer.save() 
-                return Response( 
-                    serializer.data, status=status.HTTP_201_CREATED) 
+        if not ShoppingCart.objects.filter(
+           user=request.user, recipe=recipe).exists():
+            serializer = ShoppingCartSerializer(
+                data=data, context={'request': request}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
-        if ShoppingCart.objects.filter( 
-           user=request.user, recipe=recipe).exists(): 
-            ShoppingCart.objects.filter( 
-                user=request.user, recipe=recipe 
-            ).delete() 
-            return Response(status=status.HTTP_204_NO_CONTENT) 
+        if ShoppingCart.objects.filter(
+           user=request.user, recipe=recipe).exists():
+            ShoppingCart.objects.filter(
+                user=request.user, recipe=recipe
+            ).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -195,5 +194,3 @@ def download_shopping_cart(request):
     response = HttpResponse(ingredient_list, 'Content-Type: application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{file}.pdf"'
     return response
-
-    

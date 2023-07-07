@@ -99,6 +99,7 @@ class FavoriteView(APIView, GetObjectMixin):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
+        recipe = get_object_or_404(Recipe, id=id)
         if Favorite.objects.filter(
            user=request.user, recipe=recipe).exists():
             Favorite.objects.filter(user=request.user, recipe=recipe).delete()
@@ -154,6 +155,7 @@ class ShoppingCartView(APIView, GetObjectMixin):
             'user': request.user.id,
             'recipe': id
         }
+        recipe = get_object_or_404(Recipe, id=id)
         if not ShoppingCart.objects.filter(
            user=request.user, recipe=recipe).exists():
             serializer = ShoppingCartSerializer(
@@ -166,6 +168,7 @@ class ShoppingCartView(APIView, GetObjectMixin):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
+        recipe = get_object_or_404(Recipe, id=id)
         if ShoppingCart.objects.filter(
            user=request.user, recipe=recipe).exists():
             ShoppingCart.objects.filter(

@@ -180,12 +180,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             ])
 
     def create_tags(self, tags, recipe):
-        RecipeTag.objects.bulk_create(
-            [RecipeTag(
-                recipe=recipe,
-                tag=tag
-            ) for tag in tags]
-        )
+        for tag in tags:
+            RecipeTag.objects.bulk_create([
+                RecipeTag(
+                    recipe=recipe,
+                    tag=tag,)
+            ])
 
     def create(self, validated_data):
         """

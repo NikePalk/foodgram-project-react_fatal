@@ -12,26 +12,14 @@ from rest_framework.views import APIView
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from users.models import Subscription, User
-
 from .filters import IngredientFilter, RecipeFilter
+from .mixins import GetObjectMixin
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
                           IngredientSerializer, RecipeSerializer,
                           ShoppingCartSerializer, ShowSubscriptionsSerializer,
                           SubscriptionSerializer, TagSerializer)
-
-
-class GetObjectMixin:
-    """ Миксин для добавления/удаления рецептов в избранное/корзину. """
-
-    permission_classes = (IsAuthenticated,)
-    pagination_class = CustomPagination
-
-    def check_if_exists(self, model_class, recipe):
-        return model_class.objects.filter(
-            user=self.request.user, recipe=recipe).exists(
-        )
 
 
 class SubscribeView(APIView):
@@ -83,12 +71,16 @@ class ShowSubscriptionsView(ListAPIView):
 class FavoriteView(GetObjectMixin, APIView):
     """ Добавление/удаление рецепта в/из избранного. """
 
+    permission_classes = [IsAuthenticated, ] 
+    pagination_class = CustomPagination
+
     def post(self, request, id):
         data = {
             'user': request.user.id,
             'recipe': id
         }
-        if self.check_if_exists(Favorite, id):
+        recipe = get_object_or_404(Recipe, id=id)
+        if not self.check_if_exists(Favorite, recipe):
             serializer = FavoriteSerializer(
                 data=data, context={'request': request}
             )
@@ -100,8 +92,8 @@ class FavoriteView(GetObjectMixin, APIView):
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if self.check_if_exists(Favorite, id):
-            Favorite.objects.filter(user=request.user, recipe=recipe).delete()
+        if self.check_if_exists(Favorite, recipe):
+            self.del_recipe(Favorite, recipe)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -149,6 +141,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 class ShoppingCartView(GetObjectMixin, APIView):
     """ Добавление/удаление рецепта в/из корзины. """
 
+    permission_classes = [IsAuthenticated, ]
+
     def post(self, request, id):
         data = {
             'user': request.user.id,
@@ -168,9 +162,7 @@ class ShoppingCartView(GetObjectMixin, APIView):
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
         if self.check_if_exists(ShoppingCart, recipe):
-            ShoppingCart.objects.filter(
-                user=request.user, recipe=recipe
-            ).delete()
+            self.del_recipe(ShoppingCart, recipe)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -182,11 +174,11 @@ def download_shopping_cart(request):
         recipe__shopping_cart__user=request.user
     ).values(
         'ingredient__name', 'ingredient__measurement_unit'
-    ).annotate(total_amount=Sum('recipe__amount'))
+    ).annotate(amount=Sum('recipe__amount'))
     for num, i in enumerate(ingredients):
         ingredient_list += (
             f"\n{i['ingredient__name']} - "
-            f"{i['total_amount']} {i['ingredient__measurement_unit']}"
+            f"{i['amount']} {i['ingredient__measurement_unit']}"
         )
         if num < ingredients.count() - 1:
             ingredient_list += ', '

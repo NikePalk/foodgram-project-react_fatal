@@ -20,8 +20,8 @@ INSTALLED_APPS = [
     'djoser',
     'django_filters',
     'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
     'api',
-    'recipes',
 ]
 
 MIDDLEWARE = [

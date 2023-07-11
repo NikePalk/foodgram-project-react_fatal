@@ -20,7 +20,7 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
 from rest_framework.response import Response
 
 from .filters import IngredientFilter, RecipeFilter
-from .mixins import GetObjectMixin
+from .mixins import GetObjectMixin, PermissionAndPaginationMixin
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer,
                           SubscribeSerializer, TagSerializer, TokenSerializer,

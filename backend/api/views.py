@@ -19,38 +19,19 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from api.filters import IngredientFilter, RecipeFilter
-from api.permissions import IsAdminOrReadOnly
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
-                            Subscribe, Tag)
+from .filters import IngredientFilter, RecipeFilter
+from .mixins import GetObjectMixin
+from .permissions import IsAdminOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeWriteSerializer, SubscribeRecipeSerializer,
                           SubscribeSerializer, TagSerializer, TokenSerializer,
                           UserCreateSerializer, UserListSerializer,
                           UserPasswordSerializer)
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
+                            Subscribe, Tag)
 
 User = get_user_model()
 FILENAME = 'shoppingcart.pdf'
-
-
-class GetObjectMixin:
-    """Миксина для удаления/добавления рецептов избранных/корзины."""
-
-    serializer_class = SubscribeRecipeSerializer
-    permission_classes = (AllowAny,)
-
-    def get_object(self):
-        recipe_id = self.kwargs['recipe_id']
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        self.check_object_permissions(self.request, recipe)
-        return recipe
-
-
-class PermissionAndPaginationMixin:
-    """Миксина для списка тегов и ингридиентов."""
-
-    permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = None
 
 
 class AddAndDeleteSubscribe(

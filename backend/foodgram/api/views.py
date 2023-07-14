@@ -76,10 +76,10 @@ class FavoriteView(GetObjectMixin, APIView):
     model_class: Favorite
     model_serializer: FavoriteSerializer
 
-    def post(self):
+    def post(self, request, id):
         return self.post_recipe(request, id)
 
-    def delete(self):
+    def delete(self, request, id):
         return self.del_recipe(request, id)
 
 
@@ -128,10 +128,10 @@ class ShoppingCartView(GetObjectMixin, APIView):
 
     permission_classes = [IsAuthenticated, ]
 
-    def post(self):
+    def post(self, request, id):
         return self.post_recipe(request, id)
 
-    def delete(self):
+    def delete(self, request, id):
         return self.del_recipe(request, id)
 
 

@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
+from recipes.models import Recipe
+
 
 class GetObjectMixin:
     """ Миксин для добавления/удаления рецептов в избранное/корзину. """

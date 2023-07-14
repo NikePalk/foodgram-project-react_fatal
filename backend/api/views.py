@@ -80,7 +80,7 @@ class FavoriteView(GetObjectMixin, APIView):
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        return self.del_recipe(Favorite, recipe)
+        return self.del_recipe(Favorite, None)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -134,7 +134,7 @@ class ShoppingCartView(GetObjectMixin, APIView):
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        return self.del_recipe(ShoppingCart, recipe)
+        return self.del_recipe(ShoppingCart, None)
 
 
 @api_view(['GET'])

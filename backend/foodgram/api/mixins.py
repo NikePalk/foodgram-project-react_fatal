@@ -13,7 +13,6 @@ class GetObjectMixin:
             'user': request.user.id,
             'recipe': id
         }
-        recipe = get_object_or_404(Recipe, id=id)
         if not self.model_class.objects.filter(
            user=request.user, recipe__id=id).exists():
             serializer = self.model_serializer(

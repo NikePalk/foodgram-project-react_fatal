@@ -7,6 +7,10 @@ class GetObjectMixin:
     """ Миксин для добавления/удаления рецептов в избранное/корзину. """
 
     def post_recipe(self, model_class, model_serializer):
+        data = { 
+            'user': request.user.id, 
+            'recipe': id 
+        }
         recipe = get_object_or_404(Recipe, id=id)
         if not model_class.objects.filter(
            user=request.user, recipe__id=id).exists():
@@ -19,12 +23,12 @@ class GetObjectMixin:
                 serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def del_recipe(self, model_class, recipe):
+    def del_recipe(self, model_class, None):
         recipe = get_object_or_404(Recipe, id=id)
         if model_class.objects.filter(
            user=request.user, recipe=recipe).exists():
             model_class.objects.filter(
-                user=request.user, 
+                user=request.user,
                 recipe=recipe
             ).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)

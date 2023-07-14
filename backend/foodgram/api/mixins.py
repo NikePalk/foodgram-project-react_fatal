@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -10,6 +11,7 @@ class GetObjectMixin:
             'user': request.user.id,
             'recipe': id
         }
+        recipe = get_object_or_404(Recipe, id=id)
         if not model_class.objects.filter(
            user=request.user, recipe__id=id).exists():
             serializer = model_serializer(
@@ -22,8 +24,12 @@ class GetObjectMixin:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def del_recipe(self, model_class, recipe):
+        recipe = get_object_or_404(Recipe, id=id)
         if model_class.objects.filter(
            user=request.user, recipe=recipe).exists():
-            model_class.objects.filter(user=request.user, recipe=recipe).delete()
+            model_class.objects.filter(
+                user=request.user, 
+                recipe=recipe
+            ).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)

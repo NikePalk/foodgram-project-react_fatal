@@ -7,10 +7,6 @@ class GetObjectMixin:
     """ Миксин для добавления/удаления рецептов в избранное/корзину. """
 
     def post_recipe(self, model_class, model_serializer):
-        data = {
-            'user': request.user.id,
-            'recipe': id
-        }
         recipe = get_object_or_404(Recipe, id=id)
         if not model_class.objects.filter(
            user=request.user, recipe__id=id).exists():

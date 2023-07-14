@@ -75,6 +75,10 @@ class FavoriteView(GetObjectMixin, APIView):
     pagination_class = CustomPagination
 
     def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'recipe': id
+        }
         return self.post_recipe(Favorite, FavoriteSerializer)
 
     def delete(self, request, id):
@@ -127,6 +131,10 @@ class ShoppingCartView(GetObjectMixin, APIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'recipe': id
+        }
         return self.post_recipe(ShoppingCart, ShoppingCartSerializer)
 
     def delete(self, request, id):

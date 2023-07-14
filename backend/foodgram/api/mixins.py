@@ -23,7 +23,7 @@ class GetObjectMixin:
                 serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    def del_recipe(self, model_class, None):
+    def del_recipe(self, model_class):
         recipe = get_object_or_404(Recipe, id=id)
         if model_class.objects.filter(
            user=request.user, recipe=recipe).exists():

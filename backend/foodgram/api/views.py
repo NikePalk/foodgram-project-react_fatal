@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
+                            Tag)
 from users.models import Subscription, User
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import GetObjectMixin
@@ -18,7 +18,7 @@ from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
                           IngredientSerializer, RecipeSerializer,
-                          ShoppingCartSerializer, ShowSubscriptionsSerializer,
+                          ShowSubscriptionsSerializer,
                           SubscriptionSerializer, TagSerializer)
 
 

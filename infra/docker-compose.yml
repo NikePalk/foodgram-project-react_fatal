@@ -3,12 +3,12 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/
+      - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
 
   backend:
-    image: nikepalk/backend:v1
+    image: nikepalk/backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -17,14 +17,13 @@ services:
       - db
     env_file:
       - ./.env
-    
 
   frontend:
-    image: nikepalk/frontend:v1
+    image: nikepalk/frontend:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
-      - backend
+      - db
 
   nginx:
     image: nginx:1.21.3-alpine
@@ -38,8 +37,7 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
     depends_on:
-      - frontend
-    
+      - backend    
 
 volumes:
   postgres_data:

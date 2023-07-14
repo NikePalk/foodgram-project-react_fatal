@@ -69,33 +69,18 @@ class ShowSubscriptionsView(ListAPIView):
 
 
 class FavoriteView(GetObjectMixin, APIView):
-    """ Добавление/удаление рецепта в/из избранного. """
+    """ Добавление/удаление рецепта из избранного. """
 
-    permission_classes = [IsAuthenticated, ] 
+    permission_classes = [IsAuthenticated, ]
     pagination_class = CustomPagination
 
     def post(self, request, id):
-        data = {
-            'user': request.user.id,
-            'recipe': id
-        }
         recipe = get_object_or_404(Recipe, id=id)
-        if not self.check_if_exists(Favorite, recipe):
-            serializer = FavoriteSerializer(
-                data=data, context={'request': request}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(
-                serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return self.post_recipe(Favorite, FavoriteSerializer)
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if self.check_if_exists(Favorite, recipe):
-            self.del_recipe(Favorite, recipe)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return self.del_recipe(Favorite, recipe)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -139,32 +124,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 
 class ShoppingCartView(GetObjectMixin, APIView):
-    """ Добавление/удаление рецепта в/из корзины. """
+    """ Добавление рецепта в корзину или его удаление. """
 
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request, id):
-        data = {
-            'user': request.user.id,
-            'recipe': id
-        }
         recipe = get_object_or_404(Recipe, id=id)
-        if not self.check_if_exists(ShoppingCart, recipe):
-            serializer = ShoppingCartSerializer(
-                data=data, context={'request': request}
-            )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return self.post_recipe(ShoppingCart, ShoppingCartSerializer)
 
     def delete(self, request, id):
         recipe = get_object_or_404(Recipe, id=id)
-        if self.check_if_exists(ShoppingCart, recipe):
-            self.del_recipe(ShoppingCart, recipe)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return self.del_recipe(ShoppingCart, recipe)
 
 
 @api_view(['GET'])
@@ -174,11 +144,11 @@ def download_shopping_cart(request):
         recipe__shopping_cart__user=request.user
     ).values(
         'ingredient__name', 'ingredient__measurement_unit'
-    ).annotate(amount=Sum('recipe__amount'))
+    ).annotate(total_amount=Sum('amount'))
     for num, i in enumerate(ingredients):
         ingredient_list += (
             f"\n{i['ingredient__name']} - "
-            f"{i['amount']} {i['ingredient__measurement_unit']}"
+            f"{i['total_amount']} {i['ingredient__measurement_unit']}"
         )
         if num < ingredients.count() - 1:
             ingredient_list += ', '

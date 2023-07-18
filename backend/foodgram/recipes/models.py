@@ -7,7 +7,7 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    """ Модель ингредиента. """
+    """ Модель ингредиентов. """
 
     name = models.CharField(
         'Название ингредиента',
@@ -28,7 +28,7 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    """ Модель тега. """
+    """ Модель тегов. """
 
     name = models.CharField('Название тега', unique=True, max_length=200)
     color = models.CharField('Цвет', unique=True, max_length=7)
@@ -44,7 +44,7 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """ Модель рецепта. """
+    """ Модель рецептов. """
 
     tags = models.ManyToManyField(
         Tag,
@@ -93,7 +93,7 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    """ Модель связи ингредиента и рецепта. """
+    """ Связывающая модель ингредиентов и рецепта. """
 
     recipe = models.ForeignKey(
         Recipe,
@@ -120,7 +120,7 @@ class RecipeIngredient(models.Model):
 
 
 class RecipeTag(models.Model):
-    """ Модель связи тега и рецепта. """
+    """ Связывающая модель тега и рецепта. """
 
     recipe = models.ForeignKey(
         Recipe,
@@ -143,7 +143,7 @@ class RecipeTag(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """ Модель корзины. """
+    """ Модель списка покупок. """
 
     user = models.ForeignKey(
         User,

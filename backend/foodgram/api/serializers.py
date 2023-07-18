@@ -8,22 +8,8 @@ from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
 from users.models import Subscription, User
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
-    """ Сериализатор создания пользователя. """
-
-    class Meta:
-        model = User
-        fields = [
-            'email',
-            'username',
-            'first_name',
-            'last_name',
-            'password'
-        ]
-
-
 class CustomUserSerializer(UserSerializer):
-    """ Сериализатор модели пользователя. """
+    """ Сериализатор пользователя. """
 
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
@@ -47,8 +33,22 @@ class CustomUserSerializer(UserSerializer):
         ).exists()
 
 
+class CustomUserCreateSerializer(UserCreateSerializer):
+    """ Сериализатор создания пользователя. """
+
+    class Meta:
+        model = User
+        fields = [
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'password'
+        ]
+
+
 class TagSerializer(serializers.ModelSerializer):
-    """ Сериализатор просмотра модели Тег. """
+    """ Сериализатор просмотра тегов. """
 
     class Meta:
         model = Tag
@@ -56,7 +56,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """ Сериализатор модели, связывающей ингредиенты и рецепт. """
+    """ Связывающий сериализатор ингредиентов и рецепта. """
 
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
@@ -70,7 +70,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """ Сериализатор просмотра модели Ингредиенты. """
+    """ Сериализатор просмотра ингредиентов. """
 
     class Meta:
         model = Ingredient
@@ -89,7 +89,7 @@ class AddIngredientRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """ Сериализатор просмотра модели Рецепт. """
+    """ Сериализатор просмотра рецептов. """
 
     tags = TagSerializer(many=True)
     author = CustomUserSerializer(read_only=True)
@@ -224,7 +224,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
 
 
 class ShowFavoriteSerializer(serializers.ModelSerializer):
-    """ Сериализатор для отображения избранного. """
+    """ Сериализатор избранного. """
 
     class Meta:
         model = Recipe
@@ -232,7 +232,7 @@ class ShowFavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    """ Сериализатор для списка покупок. """
+    """ Сериализатор покупок. """
 
     class Meta:
         model = ShoppingCart
@@ -245,7 +245,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    """ Сериализатор модели Избранное. """
+    """ Сериализатор ибранных рецептов. """
 
     class Meta:
         model = Favorite
@@ -258,7 +258,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShowSubscriptionsSerializer(serializers.ModelSerializer):
-    """ Сериализатор для отображения подписок пользователя. """
+    """ Сериализатор подписок пользователя. """
 
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()

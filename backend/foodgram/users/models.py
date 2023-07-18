@@ -4,12 +4,12 @@ from django.db.models import UniqueConstraint
 
 
 class User(AbstractUser):
-    """ Кастомная модель пользователя. """
+    """ Модель пользователя. """
 
     email = models.EmailField('Почта', max_length=254, unique=True)
     first_name = models.CharField('Имя', max_length=150, blank=False)
     last_name = models.CharField('Фамилия', max_length=150, blank=False)
-    username = models.CharField('Юзернейм', max_length=150)
+    username = models.CharField('Уникальный юзернейм', max_length=150)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
@@ -21,7 +21,7 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
-    """ Модель подписок. """
+    """ Модель подписки на автора. """
 
     user = models.ForeignKey(
         User,

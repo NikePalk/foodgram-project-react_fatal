@@ -23,7 +23,7 @@ from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
 
 
 class SubscribeView(APIView):
-    """ Операция подписки/отписки. """
+    """ Подписка/отписка. """
 
     permission_classes = [IsAuthenticated, ]
 
@@ -104,7 +104,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """ Операции с рецептами: добавление/изменение/удаление/просмотр. """
+    """ Рецепты: добавление/изменение/удаление/просмотр. """
 
     permission_classes = [IsAuthorOrAdminOrReadOnly, ]
     pagination_class = CustomPagination
@@ -137,6 +137,8 @@ class ShoppingCartView(GetObjectMixin, APIView):
 
 @api_view(['GET'])
 def download_shopping_cart(request):
+    """ Скачать список покупок. """
+
     ingredient_list = "Cписок покупок:"
     ingredients = RecipeIngredient.objects.filter(
         recipe__shopping_cart__user=request.user

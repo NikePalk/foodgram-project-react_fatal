@@ -2,8 +2,6 @@ from django.contrib import admin
 
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 
-EMPTY_MSG = '-пусто-'
-
 
 class IngredientsInLine(admin.TabularInline):
     model = Recipe.ingredients.through
@@ -13,14 +11,14 @@ class IngredientsInLine(admin.TabularInline):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'recipe']
     search_fields = ['user__username', 'user__email']
-    empty_value_display = EMPTY_MSG
+    empty_value_display = '-пусто-'
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'measurement_unit']
     search_fields = ['name']
-    empty_value_display = EMPTY_MSG
+    empty_value_display = '-пусто-'
 
 
 @admin.register(Recipe)
@@ -28,7 +26,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'author', 'favorites']
     search_fields = ['name', 'author__username']
     list_filter = ['tags']
-    empty_value_display = EMPTY_MSG
+    empty_value_display = '-пусто-'
     inlines = (
         IngredientsInLine,
     )
@@ -41,11 +39,11 @@ class RecipeAdmin(admin.ModelAdmin):
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'recipe']
     search_fields = ['user__username', 'user__email']
-    empty_value_display = EMPTY_MSG
+    empty_value_display = '-пусто-'
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'color', 'slug']
     search_fields = ['name', 'slug']
-    empty_value_display = EMPTY_MSG
+    empty_value_display = '-пусто-'
